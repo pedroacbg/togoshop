@@ -1,11 +1,13 @@
 package com.pedroacbg.togolog.services;
 
+import com.pedroacbg.togolog.dto.CategoryDTO;
 import com.pedroacbg.togolog.entities.Category;
 import com.pedroacbg.togolog.repositories.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -17,8 +19,9 @@ public class CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public List<Category> findAll(){
-        return repository.findAll();
+    public List<CategoryDTO> findAll(){
+        List<Category> list = repository.findAll();
+        return list.stream().map(x -> new CategoryDTO(x)).collect(Collectors.toList());
     }
 
 

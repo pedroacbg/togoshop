@@ -1,6 +1,6 @@
 package com.pedroacbg.togolog.controllers;
 
-import com.pedroacbg.togolog.entities.Category;
+import com.pedroacbg.togolog.dto.CategoryDTO;
 import com.pedroacbg.togolog.services.CategoryService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +21,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Category>> findAll(){
-        List<Category> list = service.findAll();
+    public ResponseEntity<List<CategoryDTO>> findAll(){
+        List<CategoryDTO> list = service.findAll();
         return ResponseEntity.ok().body(list);
     }
 
