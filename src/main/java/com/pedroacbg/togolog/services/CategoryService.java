@@ -3,6 +3,7 @@ package com.pedroacbg.togolog.services;
 import com.pedroacbg.togolog.dto.CategoryDTO;
 import com.pedroacbg.togolog.entities.Category;
 import com.pedroacbg.togolog.repositories.CategoryRepository;
+import com.pedroacbg.togolog.services.exceptions.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +28,9 @@ public class CategoryService {
 
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id){
-        Optional<Category> entity = repository.findById(id);
-        return new CategoryDTO(entity.get());
+        Optional<Category> obj = repository.findById(id);
+        Category entity = obj.orElseThrow(() -> new EntityNotFoundException("Entity not found!"));
+        return new CategoryDTO(entity);
     }
 
 
