@@ -38,4 +38,10 @@ public class CategoryController {
         return ResponseEntity.created(uri).body(obj);
     }
 
+    @PutMapping(path = "/{id}")
+    public ResponseEntity<CategoryDTO> update(@PathVariable Long id, @RequestBody CategoryDTO obj){
+        obj = service.update(id, obj);
+        return ResponseEntity.ok().body(obj);
+    }
+
 }
