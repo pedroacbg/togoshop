@@ -3,9 +3,12 @@ package com.pedroacbg.togolog.services;
 import com.pedroacbg.togolog.dto.CategoryDTO;
 import com.pedroacbg.togolog.entities.Category;
 import com.pedroacbg.togolog.repositories.CategoryRepository;
+import com.pedroacbg.togolog.services.exceptions.DatabaseException;
 import com.pedroacbg.togolog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -60,4 +63,15 @@ public class CategoryService {
     }
 
 
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void delete(Long id) {
+        if(!repository.existsById(id)){
+            throw new ResourceNotFoundException("Resource not found, ID: " + id);
+        }
+        try{
+            repository.deleteById(id);
+        }catch (DataIntegrityViolationException e){
+            throw new DatabaseException("Reference integrity failure");
+        }
+    }
 }
