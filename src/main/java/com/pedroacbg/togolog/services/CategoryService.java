@@ -56,13 +56,6 @@ public class CategoryService {
         }
     }
 
-    public Category copyToDto(CategoryDTO dto){
-        Category entity = new Category();
-        entity.setName(dto.getName());
-        return entity;
-    }
-
-
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
         if(!repository.existsById(id)){
@@ -73,5 +66,11 @@ public class CategoryService {
         }catch (DataIntegrityViolationException e){
             throw new DatabaseException("Reference integrity failure");
         }
+    }
+
+    private Category copyToDto(CategoryDTO dto){
+        Category entity = new Category();
+        entity.setName(dto.getName());
+        return entity;
     }
 }

@@ -1,7 +1,10 @@
 package com.pedroacbg.togolog.services;
 
+import com.pedroacbg.togolog.dto.CategoryDTO;
 import com.pedroacbg.togolog.dto.ProductDTO;
+import com.pedroacbg.togolog.entities.Category;
 import com.pedroacbg.togolog.entities.Product;
+import com.pedroacbg.togolog.repositories.CategoryRepository;
 import com.pedroacbg.togolog.repositories.ProductRepository;
 import com.pedroacbg.togolog.services.exceptions.DatabaseException;
 import com.pedroacbg.togolog.services.exceptions.ResourceNotFoundException;
@@ -19,9 +22,11 @@ import java.util.Optional;
 public class ProductService {
 
     private final ProductRepository repository;
+    private final CategoryRepository categoryRepository;
 
-    public ProductService(ProductRepository repository) {
+    public ProductService(ProductRepository repository, CategoryRepository categoryRepository) {
         this.repository = repository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Transactional(readOnly = true)
@@ -68,13 +73,19 @@ public class ProductService {
         }
     }
 
-    public Product copyToDto(ProductDTO dto){
+    private Product copyToDto(ProductDTO dto){
         Product entity = new Product();
         entity.setName(dto.getName());
         entity.setPrice(dto.getPrice());
         entity.setDescription(dto.getDescription());
         entity.setImgUrl(dto.getImgUrl());
         entity.setDate(dto.getDate());
+
+        entity.getCategories().clear();
+        for(CategoryDTO obj : dto.getCategories()){
+            Category category = categoryRepository.getReferenceById(obj.getId());
+            entity.getCategories().add(category);
+        }
         return entity;
     }
 
