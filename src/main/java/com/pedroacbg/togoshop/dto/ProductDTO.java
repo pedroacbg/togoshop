@@ -26,7 +26,7 @@ public class ProductDTO {
     @NotBlank(message = "O campo nome é obrigatório")
     private String name;
 
-    @NotBlank(message = "O campo nome é obrigatório")
+    @NotBlank(message = "O campo description é obrigatório")
     private String description;
 
     @Positive(message = "O preço deve ser um valor positivo.")
