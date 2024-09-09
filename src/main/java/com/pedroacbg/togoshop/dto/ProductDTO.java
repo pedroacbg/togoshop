@@ -2,6 +2,10 @@ package com.pedroacbg.togoshop.dto;
 
 import com.pedroacbg.togoshop.entities.Category;
 import com.pedroacbg.togoshop.entities.Product;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,10 +21,19 @@ import java.util.Set;
 public class ProductDTO {
 
     private Long id;
+
+    @Size(min = 3,max = 30,message = "O campo nome deve ter entre 3 e 30 caracteres")
+    @NotBlank(message = "O campo nome é obrigatório")
     private String name;
+
+    @NotBlank(message = "O campo nome é obrigatório")
     private String description;
+
+    @Positive(message = "O preço deve ser um valor positivo.")
     private Double price;
     private String imgUrl;
+
+    @PastOrPresent(message = "A data do produto não pode ser futura.")
     private Instant date;
 
     private List<CategoryDTO> categories = new ArrayList<>();

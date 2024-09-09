@@ -3,6 +3,7 @@ package com.pedroacbg.togoshop.controllers;
 import com.pedroacbg.togoshop.dto.UserDTO;
 import com.pedroacbg.togoshop.dto.UserInsertDTO;
 import com.pedroacbg.togoshop.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -34,14 +35,14 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<UserDTO> insert(@RequestBody UserInsertDTO obj){
+    public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserInsertDTO obj){
         UserDTO newDTO = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(newDTO.getId()).toUri();
         return ResponseEntity.created(uri).body(newDTO);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<UserDTO> update(@PathVariable Long id, @RequestBody UserDTO obj){
+    public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserDTO obj){
         obj = service.update(id, obj);
         return ResponseEntity.ok().body(obj);
     }

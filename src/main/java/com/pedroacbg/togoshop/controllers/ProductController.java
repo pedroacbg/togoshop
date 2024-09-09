@@ -2,6 +2,7 @@ package com.pedroacbg.togoshop.controllers;
 
 import com.pedroacbg.togoshop.dto.ProductDTO;
 import com.pedroacbg.togoshop.services.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -33,14 +34,14 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> insert(@RequestBody ProductDTO obj){
+    public ResponseEntity<ProductDTO> insert(@Valid @RequestBody ProductDTO obj){
         obj = service.insert(obj);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
         return ResponseEntity.created(uri).body(obj);
     }
 
     @PutMapping(path = "/{id}")
-    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @RequestBody ProductDTO obj){
+    public ResponseEntity<ProductDTO> update(@PathVariable Long id, @Valid @RequestBody ProductDTO obj){
         obj = service.update(id, obj);
         return ResponseEntity.ok().body(obj);
     }
