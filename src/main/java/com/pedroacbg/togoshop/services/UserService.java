@@ -3,6 +3,7 @@ package com.pedroacbg.togoshop.services;
 import com.pedroacbg.togoshop.dto.RoleDTO;
 import com.pedroacbg.togoshop.dto.UserDTO;
 import com.pedroacbg.togoshop.dto.UserInsertDTO;
+import com.pedroacbg.togoshop.dto.UserUpdateDTO;
 import com.pedroacbg.togoshop.entities.Role;
 import com.pedroacbg.togoshop.entities.User;
 import com.pedroacbg.togoshop.repositories.RoleRepository;
@@ -56,7 +57,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO update(Long id, UserDTO obj) {
+    public UserDTO update(Long id, UserUpdateDTO obj) {
         try {
             User entity = repository.getReferenceById(id);
             copyToDto(obj, entity);
