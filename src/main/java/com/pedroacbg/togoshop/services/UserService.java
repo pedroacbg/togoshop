@@ -6,6 +6,7 @@ import com.pedroacbg.togoshop.dto.UserInsertDTO;
 import com.pedroacbg.togoshop.dto.UserUpdateDTO;
 import com.pedroacbg.togoshop.entities.Role;
 import com.pedroacbg.togoshop.entities.User;
+import com.pedroacbg.togoshop.projections.UserDetailsProjection;
 import com.pedroacbg.togoshop.repositories.RoleRepository;
 import com.pedroacbg.togoshop.repositories.UserRepository;
 import com.pedroacbg.togoshop.services.exceptions.DatabaseException;
@@ -14,24 +15,28 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
     private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository repository, RoleRepository roleRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserService(UserRepository repository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.roleRepository = roleRepository;
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Transactional(readOnly = true)
@@ -51,7 +56,7 @@ public class UserService {
     public UserDTO insert(UserInsertDTO obj){
         User entity = new User();
         copyToDto(obj, entity);
-        entity.setPassword(bCryptPasswordEncoder.encode(obj.getPassword()));
+        entity.setPassword(passwordEncoder.encode(obj.getPassword()));
         entity = repository.save(entity);
         return new UserDTO(entity);
     }
@@ -92,4 +97,19 @@ public class UserService {
         }
     }
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        List<UserDetailsProjection> result = repository.searchUserAndRolesByEmail(username);
+        if(result.size() == 0){
+            throw new UsernameNotFoundException("Email not found");
+        }
+
+        User user = new User();
+        user.setEmail(result.get(0).getUsername());
+        user.setPassword(result.get(0).getPassword());
+        for(UserDetailsProjection projection : result){
+            user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
+        }
+        return user;
+    }
 }

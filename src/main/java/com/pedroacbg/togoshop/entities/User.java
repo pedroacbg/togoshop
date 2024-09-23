@@ -45,7 +45,7 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public void arrRole(Role role){
+    public void addRole(Role role){
         roles.add(role);
     }
 
